@@ -1,16 +1,34 @@
-# nested_scroll_helper
 
-A new Flutter application.
+ # Flutter嵌套PageView处理工具
 
-## Getting Started
+google账号出问题暂时没法传到pub
+### 效果
+![1613474056484.gif](https://img-blog.csdnimg.cn/img_convert/cd690f7ab6d6b49382ab071a57540804.gif)
 
-This project is a starting point for a Flutter application.
+### 使用
+外层PageView使用**NestPageHelperParent** 包裹并传入pageController，
+内层ScrollView使用**NestPageHelperChild**包裹，  理论上可以多层包裹嵌套。
 
-A few resources to get you started if this is your first Flutter project:
+```
+    return NestPageHelperParent(
+        child: PageView.builder(
+            itemCount: 5,
+            controller: pageController,
+            itemBuilder: (context, index) {
+              //嵌套PageView
+              if (index == 3)
+                return NestPageHelperChild(
+                    child: PageView.builder(
+                        itemCount: 5,
+                        itemBuilder: (_, index) {
+                          return Center(
+                            child: Text("内部" + index.toString()),
+                          );
+                        }));
+              return Center(
+                child: Text(index.toString()),
+              );
+            }),
+        pageController: pageController);
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
