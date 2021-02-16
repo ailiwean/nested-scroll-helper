@@ -55,14 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               //嵌套PageView
               if (index == 3)
-                return PageView.builder(
-                    itemCount: 5,
-                    itemBuilder: (_, index) {
-                      return Center(
-                        child: Text("内部" + index.toString()),
-                      );
-                    });
-
+                return NestPageHelperChild(
+                    child: PageView.builder(
+                        itemCount: 5,
+                        itemBuilder: (_, index) {
+                          return Center(
+                            child: Text("内部" + index.toString()),
+                          );
+                        }));
               return Center(
                 child: Text(index.toString()),
               );
