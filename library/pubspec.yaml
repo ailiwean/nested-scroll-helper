@@ -1,0 +1,11 @@
+name: nested_scroll_helper
+description: Handle multiple pageviews nested scrolling tool, very lightweight
+version: 0.0.1
+homepage: https://github.com/ailiwean/nested-scroll-helper
+author: aiWean<1581209979@qq.com>
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
