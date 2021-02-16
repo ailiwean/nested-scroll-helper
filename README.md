@@ -3,7 +3,8 @@
 
 google账号出问题暂时没法传到pub
 ### 效果
-![1613474056484.gif](https://img-blog.csdnimg.cn/img_convert/cd690f7ab6d6b49382ab071a57540804.gif)
+https://sm.ms/image/ALkGopHNK2M9Ttg
+
 
 ### 使用
 外层PageView使用**NestPageHelperParent** 包裹并传入pageController，
