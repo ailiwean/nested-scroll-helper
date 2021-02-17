@@ -16,7 +16,10 @@ class NestPageHelperChild extends StatelessWidget {
     var movediff;
     bool isStart = false;
     return NotificationListener(
-      child: child,
+      child: ScrollConfiguration(
+        child: child,
+        behavior: _AlphaScrollBehavior(),
+      ),
       onNotification: (notification) {
         switch (notification.runtimeType) {
           case ScrollStartNotification:
@@ -25,7 +28,7 @@ class NestPageHelperChild extends StatelessWidget {
             if (!isStart) return false;
             ScrollUpdateNotification xdiff = notification;
             if (xdiff.dragDetails == null) return false;
-            double offsetX = -xdiff.dragDetails.delta.dx;
+            double offsetX = xdiff.dragDetails.delta.dx;
             movediff.update(offsetX);
             movediff.dispatch(context);
             break;
@@ -38,7 +41,8 @@ class NestPageHelperChild extends StatelessWidget {
             break;
           case OverscrollNotification:
             OverscrollNotification xdiff = notification;
-            double offsetX = xdiff.overscroll;
+            if (xdiff.dragDetails == null) return false;
+            double offsetX = xdiff.dragDetails.delta.dx;
             if (movediff == null) {
               isStart = true;
               movediff = NestedMoveNotification(xdiff: offsetX);
@@ -51,5 +55,24 @@ class NestPageHelperChild extends StatelessWidget {
         return true;
       },
     );
+  }
+}
+
+class _AlphaScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return GlowingOverscrollIndicator(
+      child: child,
+      axisDirection: axisDirection,
+      color: Colors.transparent,
+      showLeading: false,
+      showTrailing: false,
+    );
+  }
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return ClampingScrollPhysics();
   }
 }

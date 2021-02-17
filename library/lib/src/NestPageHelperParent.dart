@@ -50,10 +50,10 @@ class _NestPageHelperParentState extends State<NestPageHelperParent> {
             _frequency++;
             if (_drag == null) return false;
             _drag.update(DragUpdateDetails(
-                delta: Offset(-notification.xdiff, 0),
+                delta: Offset(notification.xdiff, 0),
                 globalPosition:
-                    Offset(pageController.offset - notification.xdiff, 0),
-                primaryDelta: -notification.xdiff));
+                    Offset(pageController.offset + notification.xdiff, 0),
+                primaryDelta: notification.xdiff));
             break;
 
           case NestedEndNitification:
@@ -61,12 +61,12 @@ class _NestPageHelperParentState extends State<NestPageHelperParent> {
             _drag = null;
             double velocity = _totalOffset / _frequency;
             //去前页
-            if (velocity < -2) {
+            if (velocity > 2) {
               pageController.previousPage(
                   duration: Duration(milliseconds: 300), curve: Curves.ease);
             }
             //去后页
-            if (velocity > 2) {
+            if (velocity < -2) {
               pageController.nextPage(
                   duration: Duration(milliseconds: 300), curve: Curves.ease);
             }
