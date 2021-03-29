@@ -6,10 +6,22 @@ import 'nest_scroll_notifacation.dart';
 /// @Author: SWY
 /// @Date: 2021/2/15 20:29
 
-class NestPageHelperChild extends StatelessWidget {
-  final Widget child;
+// ignore: must_be_immutable
 
-  NestPageHelperChild({Key key, @required this.child}) : super(key: key);
+class NestPageHelperChild extends StatefulWidget {
+  Widget child;
+  PageController pageController;
+  NestPageHelperChild(
+      {Key key, @required this.child, @required this.pageController})
+      : super(key: key);
+  @override
+  _NestPageHelperChildState createState() => _NestPageHelperChildState();
+}
+
+class _NestPageHelperChildState extends State<NestPageHelperChild> {
+  bool direction;
+  double recordPixel;
+  bool lock = false;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +29,7 @@ class NestPageHelperChild extends StatelessWidget {
     bool isStart = false;
     return NotificationListener(
       child: ScrollConfiguration(
-        child: child,
+        child: widget.child,
         behavior: _AlphaScrollBehavior(),
       ),
       onNotification: (notification) {
@@ -25,12 +37,30 @@ class NestPageHelperChild extends StatelessWidget {
           case ScrollStartNotification:
             break;
           case ScrollUpdateNotification:
-            if (!isStart) return false;
+            if (!isStart || lock || (direction == null)) return false;
             ScrollUpdateNotification xdiff = notification;
             if (xdiff.dragDetails == null) return false;
             double offsetX = xdiff.dragDetails.delta.dx;
-            movediff.update(offsetX);
-            movediff.dispatch(context);
+            bool outRange = (direction && recordPixel > 0) ||
+                (!direction && recordPixel < 0);
+            if ((direction && movediff.xdiff > 0) ||
+                (!direction && movediff.xdiff < 0)) {
+            } else {
+              if (outRange) {
+                print('herer');
+                lock = true;
+                widget.pageController.position
+                    .setPixels(widget.pageController.position.pixels + offsetX);
+                lock = false;
+              }
+            }
+
+            if (outRange) {
+              recordPixel += offsetX;
+              movediff.update(offsetX);
+              movediff.dispatch(context);
+            }
+
             break;
           case ScrollEndNotification:
             movediff = null;
@@ -41,13 +71,16 @@ class NestPageHelperChild extends StatelessWidget {
             break;
           case OverscrollNotification:
             OverscrollNotification xdiff = notification;
+            direction = xdiff.dragDetails.delta.dx > 0;
             if (xdiff.dragDetails == null) return false;
             double offsetX = xdiff.dragDetails.delta.dx;
             if (movediff == null) {
               isStart = true;
+              recordPixel = 0;
               movediff = NestedMoveNotification(xdiff: offsetX);
               NestedStartNotification().dispatch(context);
             }
+            recordPixel += offsetX;
             movediff.update(offsetX);
             movediff.dispatch(context);
             break;
